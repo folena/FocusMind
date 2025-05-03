@@ -3,20 +3,18 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class BotaoIniciarTeste : MonoBehaviour
 {
-    public StimulusSpawner spawner; // arraste o objeto com o spawner aqui
+    public TesteManager testeManager; // <- arraste o GameObject com TesteManager no Inspector
 
     private void Start()
     {
-        // Garante que o botão possa ser clicado
-        GetComponent<XRBaseInteractable>().selectEntered.AddListener(IniciarTeste);
+        GetComponent<XRBaseInteractable>().selectEntered.AddListener(IniciarFase);
     }
 
-    private void IniciarTeste(SelectEnterEventArgs args)
+    private void IniciarFase(SelectEnterEventArgs args)
     {
-        Debug.Log("Iniciando teste...");
-        spawner.IniciarTeste();
+        Debug.Log("Iniciando fase pelo botÃ£o...");
+        testeManager.IniciarFase();
 
-        // Opcional: desativa o botão após clique
         gameObject.SetActive(false);
     }
 }

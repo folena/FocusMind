@@ -12,34 +12,52 @@ public class Distrator
 
 public class DistratorController : MonoBehaviour
 {
-    [Header("Som ambiente contínuo")]
+    [Header("Som ambiente continuo")]
     public AudioSource somAmbiente;
     public AudioClip clipAmbiente;
 
-    [Header("Distratores múltiplos")]
-    public Distrator[] distratores;
+    [Header("Distratores por Fase")]
+    public Distrator[] distratoresConcentrada;
+    public Distrator[] distratoresAlternada;
+    public Distrator[] distratoresDividida;
 
     void Start()
     {
-        if (somAmbiente != null && clipAmbiente != null)
+        if (somAmbiente&& clipAmbiente)
         {
             somAmbiente.clip = clipAmbiente;
             somAmbiente.loop = true;
             somAmbiente.Play();
         }
 
-        foreach (Distrator d in distratores)
-        {
-            if (d.hitboxDistrator != null)
-                d.hitboxDistrator.SetActive(false);
-        }
+        DesativarTodosDistratores();
     }
 
-    public void IniciarDistratores()
+    public void IniciarDistratores(TesteManager.TipoTarefa fase)
     {
-        foreach (Distrator d in distratores)
+        DesativarTodosDistratores();
+
+        Distrator[] listaSelecionada = null;
+
+        switch (fase)
         {
-            StartCoroutine(AtivarDistratorComDelay(d));
+            case TesteManager.TipoTarefa.AtencaoConcentrada:
+                listaSelecionada = distratoresConcentrada;
+                break;
+            case TesteManager.TipoTarefa.AtencaoAlternada:
+                listaSelecionada = distratoresAlternada;
+                break;
+            case TesteManager.TipoTarefa.AtencaoDividida:
+                listaSelecionada = distratoresDividida;
+                break;
+        }
+
+        if (listaSelecionada != null)
+        {
+            foreach (Distrator d in listaSelecionada)
+            {
+                StartCoroutine(AtivarDistratorComDelay(d));
+            }
         }
     }
 
@@ -47,29 +65,33 @@ public class DistratorController : MonoBehaviour
     {
         yield return new WaitForSeconds(d.tempoInicial);
 
-        // Ativa a hitbox
-        if (d.hitboxDistrator != null)
+        if (d.hitboxDistrator)
             d.hitboxDistrator.SetActive(true);
 
-        // Toca o som do alarme
-        if (d.audioSource != null && d.somAlarme != null)
+        if (d.audioSource&& d.somAlarme)
         {
             d.audioSource.clip = d.somAlarme;
             d.audioSource.loop = false;
             d.audioSource.Play();
 
-            // Espera o tempo de duração do som
             yield return new WaitForSeconds(d.somAlarme.length);
 
             d.audioSource.Stop();
         }
 
-        // Desativa a hitbox
-        if (d.hitboxDistrator != null)
+        if (d.hitboxDistrator)
             d.hitboxDistrator.SetActive(false);
     }
+
+    private void DesativarTodosDistratores()
+    {
+        foreach (var d in distratoresConcentrada)
+            if (d.hitboxDistrator) d.hitboxDistrator.SetActive(false);
+
+        foreach (var d in distratoresAlternada)
+            if (d.hitboxDistrator) d.hitboxDistrator.SetActive(false);
+
+        foreach (var d in distratoresDividida)
+            if (d.hitboxDistrator) d.hitboxDistrator.SetActive(false);
+    }
 }
-
-
-
-
