@@ -11,34 +11,35 @@ public class StimulusSpawner : MonoBehaviour
 
     public float intervaloEntreEstimulos = 2f;
     public float delayEntreLetras = 0.5f;
-    private float tempoDeAparecimento;
-    private float tempoReacao;
+    private float tempoDeAparecimento = 0f;
+    private float tempoReacao = 0f;
 
     private string letraAlvoAtual = "A";
     private float tempoInicioFase;
-    private int indiceLetraAtual;
-    private string[] letrasAlternadas = { "A", "E", "F", "A" }; // 4 blocos de 30s
+    private int indiceLetraAtual = 0;
+    private string[] letrasAlternadas = { "A", "E", "F", "A" };
 
     private GameObject letraAtual;
-    private bool podeInteragir;
-    private bool testeAtivo;
-    private GameObject ultimaLetraPrefab;
+    private bool podeInteragir = false;
+    private bool testeAtivo = false;
+    private GameObject ultimaLetraPrefab = null;
 
-    private int acertos;
-    private int erros;
-    private int omissoes;
-    private int distratoresInteragidos;
+    private int acertos = 0;
+    private int erros = 0;
+    private int omissoes = 0;
+    private int distratoresInteragidos = 0;
 
     public DistratorController distratorController;
     public TesteManager.TipoTarefa faseAtual = TesteManager.TipoTarefa.AtencaoConcentrada;
-    public TesteManager testeManager; // nova referencia
+    public TesteManager testeManager;
+    public ResultadoUIManager resultadoUI;
 
     public void IniciarTeste()
     {
         testeAtivo = true;
         StartCoroutine(ControlarEstimulos());
 
-        if (distratorController)
+        if (distratorController != null)
             distratorController.IniciarDistratores(faseAtual);
     }
 
@@ -62,7 +63,7 @@ public class StimulusSpawner : MonoBehaviour
 
             VerificarOmissaoAtual();
 
-            if (letraAtual)
+            if (letraAtual != null)
                 Destroy(letraAtual);
 
             yield return StartCoroutine(PiscarAntesDaProxima());
@@ -71,10 +72,9 @@ public class StimulusSpawner : MonoBehaviour
 
     void SpawnLetra()
     {
-        if (letraAtual)
+        if (letraAtual != null)
             Destroy(letraAtual);
 
-        // Atualiza o alvo se estiver na fase alternada
         if (faseAtual == TesteManager.TipoTarefa.AtencaoAlternada)
         {
             float tempoDecorrido = Time.time - tempoInicioFase;
@@ -84,12 +84,10 @@ public class StimulusSpawner : MonoBehaviour
             {
                 indiceLetraAtual = novoIndice;
                 letraAlvoAtual = letrasAlternadas[indiceLetraAtual];
-                Debug.Log($"🔁 Novo alvo: {letraAlvoAtual} (t = {tempoDecorrido:F0}s)");
+                Debug.Log($"\uD83D\uDD01 Novo alvo: {letraAlvoAtual} (t = {tempoDecorrido:F0}s)");
 
-                if (testeManager&& testeManager.textoInstrucao)
-                {
+                if (testeManager != null && testeManager.textoInstrucao != null)
                     testeManager.ExibirMensagemTemporaria("Novo alvo: " + letraAlvoAtual, 2f);
-                }
             }
         }
 
@@ -127,6 +125,11 @@ public class StimulusSpawner : MonoBehaviour
         LetraStimulo letraScript = letraAtual.GetComponent<LetraStimulo>();
         letraScript.isAlvo = isAlvo;
 
+        if (isAlvo && resultadoUI != null)
+        {
+            resultadoUI.RegistrarLetraAlvo(faseAtual);
+        }
+
         podeInteragir = true;
         tempoDeAparecimento = Time.time;
     }
@@ -140,7 +143,7 @@ public class StimulusSpawner : MonoBehaviour
         foreach (Transform ponto in pontosSpawn)
         {
             Renderer renderer = ponto.GetComponent<Renderer>();
-            if (renderer)
+            if (renderer != null)
                 renderer.enabled = false;
         }
 
@@ -149,7 +152,7 @@ public class StimulusSpawner : MonoBehaviour
             foreach (Transform ponto in pontosSpawn)
             {
                 Renderer renderer = ponto.GetComponent<Renderer>();
-                if (renderer)
+                if (renderer != null)
                     renderer.enabled = !renderer.enabled;
             }
 
@@ -160,7 +163,7 @@ public class StimulusSpawner : MonoBehaviour
         foreach (Transform ponto in pontosSpawn)
         {
             Renderer renderer = ponto.GetComponent<Renderer>();
-            if (renderer)
+            if (renderer != null)
                 renderer.enabled = true;
         }
     }
@@ -169,6 +172,9 @@ public class StimulusSpawner : MonoBehaviour
     {
         distratoresInteragidos++;
         Debug.Log("Distrator ativado! Total: " + distratoresInteragidos);
+
+        if (resultadoUI != null)
+            resultadoUI.RegistrarDistrator(faseAtual);
     }
 
     void VerificarOmissaoAtual()
@@ -176,10 +182,13 @@ public class StimulusSpawner : MonoBehaviour
         if (letraAtual == null) return;
 
         LetraStimulo letraScript = letraAtual.GetComponent<LetraStimulo>();
-        if (letraScript&& letraScript.isAlvo && !letraScript.foiInteragido)
+        if (letraScript != null && letraScript.isAlvo && !letraScript.foiInteragido)
         {
             omissoes++;
             Debug.Log("Omissão! Total: " + omissoes);
+
+            if (resultadoUI != null)
+                resultadoUI.RegistrarOmissao(faseAtual);
         }
     }
 
@@ -189,7 +198,7 @@ public class StimulusSpawner : MonoBehaviour
         podeInteragir = false;
         testeAtivo = false;
 
-        if (letraAtual)
+        if (letraAtual != null)
         {
             Destroy(letraAtual);
             letraAtual = null;
@@ -213,7 +222,6 @@ public class StimulusSpawner : MonoBehaviour
                 break;
 
             case TesteManager.TipoTarefa.AtencaoDividida:
-                // futura lógica de spawn duplo
                 break;
         }
     }
@@ -223,7 +231,7 @@ public class StimulusSpawner : MonoBehaviour
         if (letraAtual == null) return;
 
         LetraStimulo letraScript = letraAtual.GetComponent<LetraStimulo>();
-        if (letraScript && !letraScript.foiInteragido)
+        if (letraScript != null && !letraScript.foiInteragido)
         {
             letraScript.Interagir();
             tempoReacao = Time.time - tempoDeAparecimento;
@@ -232,11 +240,17 @@ public class StimulusSpawner : MonoBehaviour
             {
                 acertos++;
                 Debug.Log($"Acerto! Tempo de reação: {tempoReacao:F2} segundos");
+
+                if (resultadoUI != null)
+                    resultadoUI.RegistrarAcerto(faseAtual, tempoReacao);
             }
             else
             {
                 erros++;
                 Debug.Log("Erro!");
+
+                if (resultadoUI != null)
+                    resultadoUI.RegistrarErro(faseAtual);
             }
         }
 

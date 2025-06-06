@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -23,6 +21,7 @@ public class TesteManager : MonoBehaviour
     public StimulusSpawner spawner;
     public GameObject botaoIniciar;
     public TextMeshPro textoInstrucao;
+    public ResultadoUIManager resultadoUI;
 
     private float tempoFaseAtual;
     private bool faseAtiva;
@@ -47,33 +46,29 @@ public class TesteManager : MonoBehaviour
 
     public void IniciarFase()
     {
-        if (botaoIniciar)
-            botaoIniciar.SetActive(false);
+        botaoIniciar.SetActive(false);
+        textoInstrucao.gameObject.SetActive(false);
 
-        if (textoInstrucao)
-            textoInstrucao.gameObject.SetActive(false);
+        spawner.ConfigurarParaFase(faseAtual);
+        spawner.IniciarTeste();
 
         tempoFaseAtual = ObterTempoDaFase(faseAtual);
         faseAtiva = true;
-
-        if (spawner)
-        {
-            spawner.ConfigurarParaFase(faseAtual);
-            spawner.IniciarTeste();
-        }
     }
-
 
     void EncerrarFaseAtual()
     {
         faseAtiva = false;
         spawner.PararTeste();
 
-        Debug.Log($"✅ Fase {faseAtual} encerrada.");
-
         if (faseAtual == TipoTarefa.AtencaoDividida)
         {
-            Debug.Log("🎉 Todas as fases concluídas!");
+            Debug.Log("Todas as fases concluídas!");
+
+            if (resultadoUI != null)
+            {
+                resultadoUI.MostrarResultadosNaTela();
+            }
         }
         else
         {
@@ -89,37 +84,16 @@ public class TesteManager : MonoBehaviour
 
     void PrepararFaseAtual()
     {
-        if (botaoIniciar)
+        if (botaoIniciar != null)
             botaoIniciar.SetActive(true);
 
-        if (textoInstrucao)
+        if (textoInstrucao != null)
         {
             textoInstrucao.text = "Próxima fase: " + faseAtual.ToString();
             textoInstrucao.gameObject.SetActive(true);
         }
-
-        Debug.Log($"🕹 Pronto para iniciar fase: {faseAtual}");
     }
 
-    public void ExibirMensagemTemporaria(string mensagem, float duracao)
-    {
-        StopAllCoroutines();
-        StartCoroutine(MostrarTextoTemporario(mensagem, duracao));
-    }
-
-    private IEnumerator MostrarTextoTemporario(string mensagem, float duracao)
-    {
-        if (textoInstrucao)
-        {
-            textoInstrucao.text = mensagem;
-            textoInstrucao.gameObject.SetActive(true);
-
-            yield return new WaitForSeconds(duracao);
-
-            textoInstrucao.gameObject.SetActive(false);
-        }
-    }
-    
     float ObterTempoDaFase(TipoTarefa fase)
     {
         switch (fase)
@@ -129,5 +103,22 @@ public class TesteManager : MonoBehaviour
             case TipoTarefa.AtencaoDividida: return tempoDividida;
             default: return 60f;
         }
+    }
+
+    public void ExibirMensagemTemporaria(string mensagem, float duracao)
+    {
+        if (textoInstrucao != null)
+        {
+            StopAllCoroutines();
+            StartCoroutine(MostrarTextoTemporario(mensagem, duracao));
+        }
+    }
+
+    private System.Collections.IEnumerator MostrarTextoTemporario(string mensagem, float duracao)
+    {
+        textoInstrucao.text = mensagem;
+        textoInstrucao.gameObject.SetActive(true);
+        yield return new WaitForSeconds(duracao);
+        textoInstrucao.gameObject.SetActive(false);
     }
 }
