@@ -19,7 +19,7 @@ public class DistratorController : MonoBehaviour
     [Header("Distratores por Fase")]
     public Distrator[] distratoresConcentrada;
     public Distrator[] distratoresAlternada;
-    public Distrator[] distratoresDividida;
+    public Distrator[] distratoresSustentada;
 
     void Start()
     {
@@ -41,14 +41,14 @@ public class DistratorController : MonoBehaviour
 
         switch (fase)
         {
-            case TesteManager.TipoTarefa.AtencaoSeletiva:
+            case TesteManager.TipoTarefa.AtencaoConcentrada:
                 listaSelecionada = distratoresConcentrada;
                 break;
             case TesteManager.TipoTarefa.AtencaoAlternada:
                 listaSelecionada = distratoresAlternada;
                 break;
-            case TesteManager.TipoTarefa.AtencaoDividida:
-                listaSelecionada = distratoresDividida;
+            case TesteManager.TipoTarefa.AtencaoSustentada:
+                listaSelecionada = distratoresSustentada;
                 break;
         }
 
@@ -91,7 +91,7 @@ public class DistratorController : MonoBehaviour
         foreach (var d in distratoresAlternada)
             if (d.hitboxDistrator) d.hitboxDistrator.SetActive(false);
 
-        foreach (var d in distratoresDividida)
+        foreach (var d in distratoresSustentada)
             if (d.hitboxDistrator) d.hitboxDistrator.SetActive(false);
     }
 }

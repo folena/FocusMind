@@ -1,21 +1,25 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
+using UnityEngine.Serialization; // Adicionado para usar List
 
 public class TesteManager : MonoBehaviour
 {
     public enum TipoTarefa
     {
-        AtencaoSeletiva,
+        AtencaoConcentrada,
         AtencaoAlternada,
-        AtencaoDividida
+        AtencaoSustentada
     }
 
     [Header("Controle de Fases")]
-    public TipoTarefa faseAtual = TipoTarefa.AtencaoSeletiva;
-    public float tempoSeletiva = 120f;
+    public List<TipoTarefa> sequenciaDeFases = new List<TipoTarefa>();
+    private int indiceFaseAtual = 0;
+
+    public float tempoConcentrada = 120f;
     public float tempoAlternada = 120f;
-    public float tempoDividida = 90f;
+    public float tempoSustentada = 90f;
 
     [Header("Referências")]
     public StimulusSpawner spawner;
@@ -28,7 +32,16 @@ public class TesteManager : MonoBehaviour
 
     void Start()
     {
-        PrepararFaseAtual();
+        // Garante que o índice é válido antes de preparar a fase
+        if (sequenciaDeFases.Count > 0)
+        {
+            indiceFaseAtual = 0;
+            PrepararFaseAtual();
+        }
+        else
+        {
+            if (botaoIniciar != null) botaoIniciar.SetActive(false);
+        }
     }
 
     void Update()
@@ -46,13 +59,16 @@ public class TesteManager : MonoBehaviour
 
     public void IniciarFase()
     {
+        if (indiceFaseAtual >= sequenciaDeFases.Count) return;
+
         botaoIniciar.SetActive(false);
         textoInstrucao.gameObject.SetActive(false);
 
-        spawner.ConfigurarParaFase(faseAtual);
+        TipoTarefa fase = sequenciaDeFases[indiceFaseAtual];
+        spawner.ConfigurarParaFase(fase);
         spawner.IniciarTeste();
 
-        tempoFaseAtual = ObterTempoDaFase(faseAtual);
+        tempoFaseAtual = ObterTempoDaFase(fase);
         faseAtiva = true;
     }
 
@@ -61,10 +77,9 @@ public class TesteManager : MonoBehaviour
         faseAtiva = false;
         spawner.PararTeste();
 
-        if (faseAtual == TipoTarefa.AtencaoDividida)
+        // Verifica se o índice atual é o último da lista
+        if (indiceFaseAtual >= sequenciaDeFases.Count - 1)
         {
-            Debug.Log("Todas as fases concluídas!");
-
             if (resultadoUI != null)
             {
                 resultadoUI.MostrarResultadosNaTela();
@@ -78,18 +93,21 @@ public class TesteManager : MonoBehaviour
 
     void AvancarParaProximaFase()
     {
-        faseAtual = (TipoTarefa)(((int)faseAtual) + 1);
+        indiceFaseAtual++;
         PrepararFaseAtual();
     }
 
     void PrepararFaseAtual()
     {
+        if (indiceFaseAtual >= sequenciaDeFases.Count) return;
+
         if (botaoIniciar != null)
             botaoIniciar.SetActive(true);
 
         if (textoInstrucao != null)
         {
-            textoInstrucao.text = "Próxima fase: " + faseAtual.ToString();
+            TipoTarefa fase = sequenciaDeFases[indiceFaseAtual];
+            textoInstrucao.text = "Próxima fase: " + fase.ToString();
             textoInstrucao.gameObject.SetActive(true);
         }
     }
@@ -98,9 +116,9 @@ public class TesteManager : MonoBehaviour
     {
         switch (fase)
         {
-            case TipoTarefa.AtencaoSeletiva: return tempoSeletiva;
+            case TipoTarefa.AtencaoConcentrada: return tempoConcentrada;
             case TipoTarefa.AtencaoAlternada: return tempoAlternada;
-            case TipoTarefa.AtencaoDividida: return tempoDividida;
+            case TipoTarefa.AtencaoSustentada: return tempoSustentada;
             default: return 60f;
         }
     }

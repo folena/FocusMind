@@ -30,7 +30,7 @@ public class StimulusSpawner : MonoBehaviour
     private int distratoresInteragidos = 0;
 
     public DistratorController distratorController;
-    public TesteManager.TipoTarefa faseAtual = TesteManager.TipoTarefa.AtencaoSeletiva;
+    public TesteManager.TipoTarefa faseAtual = TesteManager.TipoTarefa.AtencaoConcentrada;
     public TesteManager testeManager;
     public ResultadoUIManager resultadoUI;
 
@@ -109,12 +109,12 @@ public class StimulusSpawner : MonoBehaviour
         string letraNome = prefabSelecionado.name.Trim().ToUpper();
         bool isAlvo = false;
 
-        if (faseAtual == TesteManager.TipoTarefa.AtencaoSeletiva ||
+        if (faseAtual == TesteManager.TipoTarefa.AtencaoConcentrada ||
             faseAtual == TesteManager.TipoTarefa.AtencaoAlternada)
         {
             isAlvo = letraNome == $"LETRA_{letraAlvoAtual.ToUpper()}";
         }
-        else if (faseAtual == TesteManager.TipoTarefa.AtencaoDividida)
+        else if (faseAtual == TesteManager.TipoTarefa.AtencaoSustentada)
         {
             isAlvo = Random.value > 0.5f;
         }
@@ -211,7 +211,7 @@ public class StimulusSpawner : MonoBehaviour
 
         switch (faseAtual)
         {
-            case TesteManager.TipoTarefa.AtencaoSeletiva:
+            case TesteManager.TipoTarefa.AtencaoConcentrada:
                 letraAlvoAtual = "A";
                 break;
 
@@ -221,7 +221,7 @@ public class StimulusSpawner : MonoBehaviour
                 tempoInicioFase = Time.time;
                 break;
 
-            case TesteManager.TipoTarefa.AtencaoDividida:
+            case TesteManager.TipoTarefa.AtencaoSustentada:
                 break;
         }
     }

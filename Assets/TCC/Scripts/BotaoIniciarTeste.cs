@@ -12,7 +12,6 @@ public class BotaoIniciarTeste : MonoBehaviour
 
     private void IniciarFase(SelectEnterEventArgs args)
     {
-        Debug.Log("Iniciando fase pelo botão...");
         testeManager.IniciarFase();
 
         gameObject.SetActive(false);
