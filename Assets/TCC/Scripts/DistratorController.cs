@@ -41,7 +41,7 @@ public class DistratorController : MonoBehaviour
 
         switch (fase)
         {
-            case TesteManager.TipoTarefa.AtencaoConcentrada:
+            case TesteManager.TipoTarefa.AtencaoSeletiva:
                 listaSelecionada = distratoresConcentrada;
                 break;
             case TesteManager.TipoTarefa.AtencaoAlternada:

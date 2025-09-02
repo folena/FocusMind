@@ -6,14 +6,14 @@ public class TesteManager : MonoBehaviour
 {
     public enum TipoTarefa
     {
-        AtencaoConcentrada,
+        AtencaoSeletiva,
         AtencaoAlternada,
         AtencaoDividida
     }
 
     [Header("Controle de Fases")]
-    public TipoTarefa faseAtual = TipoTarefa.AtencaoConcentrada;
-    public float tempoConcentrada = 120f;
+    public TipoTarefa faseAtual = TipoTarefa.AtencaoSeletiva;
+    public float tempoSeletiva = 120f;
     public float tempoAlternada = 120f;
     public float tempoDividida = 90f;
 
@@ -98,7 +98,7 @@ public class TesteManager : MonoBehaviour
     {
         switch (fase)
         {
-            case TipoTarefa.AtencaoConcentrada: return tempoConcentrada;
+            case TipoTarefa.AtencaoSeletiva: return tempoSeletiva;
             case TipoTarefa.AtencaoAlternada: return tempoAlternada;
             case TipoTarefa.AtencaoDividida: return tempoDividida;
             default: return 60f;

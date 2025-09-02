@@ -10,15 +10,5 @@ public class LetraStimulo : MonoBehaviour
         if (foiInteragido) return;
 
         foiInteragido = true;
-
-        if (isAlvo)
-        {
-            Debug.Log("ACERTOU a letra!");
-        }
-        else
-        {
-            Debug.Log("ERROU a letra!");
-        }
-
     }
 }
