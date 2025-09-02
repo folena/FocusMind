@@ -23,6 +23,7 @@ public class TesteManager : MonoBehaviour
 
     [Header("Referências")]
     public StimulusSpawner spawner;
+    public ColorSpawner colorSpawner;
     public GameObject botaoIniciar;
     public TextMeshPro textoInstrucao;
     public ResultadoUIManager resultadoUI;
@@ -32,7 +33,6 @@ public class TesteManager : MonoBehaviour
 
     void Start()
     {
-        // Garante que o índice é válido antes de preparar a fase
         if (sequenciaDeFases.Count > 0)
         {
             indiceFaseAtual = 0;
@@ -65,10 +65,17 @@ public class TesteManager : MonoBehaviour
         textoInstrucao.gameObject.SetActive(false);
 
         TipoTarefa fase = sequenciaDeFases[indiceFaseAtual];
-        spawner.ConfigurarParaFase(fase);
-        spawner.IniciarTeste();
+        tempoFaseAtual = ObterTempoDaFase(fase); // Obter o tempo primeiro
 
-        tempoFaseAtual = ObterTempoDaFase(fase);
+        // Passa a duração da fase para o spawner preparar o plano de estímulos
+        spawner.ConfigurarParaFase(fase, tempoFaseAtual);
+        spawner.IniciarTeste();
+        
+        if (fase == TipoTarefa.AtencaoAlternada && colorSpawner != null)
+        {
+            colorSpawner.Iniciar();
+        }
+
         faseAtiva = true;
     }
 
@@ -76,8 +83,12 @@ public class TesteManager : MonoBehaviour
     {
         faseAtiva = false;
         spawner.PararTeste();
+        
+        if (colorSpawner != null) 
+        {
+            colorSpawner.Parar();
+        }
 
-        // Verifica se o índice atual é o último da lista
         if (indiceFaseAtual >= sequenciaDeFases.Count - 1)
         {
             if (resultadoUI != null)
