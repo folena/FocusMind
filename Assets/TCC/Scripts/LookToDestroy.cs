@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class LookToDestroy : MonoBehaviour
 {
-    public Camera playerCamera;                  // A câmera do jogador
-    public float maxDistance = 10f;              // Distância máxima para detectar o objeto
-    public string targetTag = "Distrator";       // Tag usada para os distratores (ajuste se necessário)
+    public Camera playerCamera;
+    public float maxDistance = 10f;
+    public string targetTag = "Distrator";
 
     void Update()
     {
@@ -22,10 +22,8 @@ public class LookToDestroy : MonoBehaviour
         {
             if (hit.collider.CompareTag(targetTag))
             {
-                // Garante que só registra uma vez (desativa a hitbox)
                 hit.collider.gameObject.SetActive(false);
 
-                // Chama o StimulusSpawner para registrar a interação com o distrator
                 StimulusSpawner spawner = FindObjectOfType<StimulusSpawner>();
                 if (spawner != null)
                 {

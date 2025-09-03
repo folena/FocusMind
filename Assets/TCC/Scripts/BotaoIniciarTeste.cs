@@ -3,8 +3,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class BotaoIniciarTeste : MonoBehaviour
 {
-    public TesteManager testeManager; // <- arraste o GameObject com TesteManager no Inspector
-
+    public TesteManager testeManager; 
     private void Start()
     {
         GetComponent<XRBaseInteractable>().selectEntered.AddListener(IniciarFase);

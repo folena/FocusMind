@@ -1,5 +1,4 @@
-﻿// ColorSpawner.cs
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ColorSpawner : MonoBehaviour
 {
@@ -10,7 +9,6 @@ public class ColorSpawner : MonoBehaviour
     public GameObject CorAtualPrefab { get; private set; }
     private GameObject objetoCorInstanciado;
 
-    // Chamado pelo StimulusSpawner para garantir a sincronização
     public void SpawnNovaCor()
     {
         if (objetoCorInstanciado != null)
@@ -23,10 +21,8 @@ public class ColorSpawner : MonoBehaviour
             return;
         }
 
-        // Sorteia e guarda o prefab da cor
         CorAtualPrefab = corPrefabs[Random.Range(0, corPrefabs.Length)];
         
-        // Sorteia o local e instancia a cor
         Transform pontoSpawn = pontosSpawnCor[Random.Range(0, pontosSpawnCor.Length)];
         objetoCorInstanciado = Instantiate(CorAtualPrefab, pontoSpawn.position, pontoSpawn.rotation);
     }

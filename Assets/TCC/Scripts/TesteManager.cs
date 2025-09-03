@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
-using UnityEngine.Serialization; // Adicionado para usar List
+using UnityEngine.Serialization;
 
 public class TesteManager : MonoBehaviour
 {
@@ -33,14 +33,13 @@ public class TesteManager : MonoBehaviour
 
     void Start()
     {
-        if (sequenciaDeFases.Count > 0)
+        if (DataExportService.I != null)
         {
-            indiceFaseAtual = 0;
-            PrepararFaseAtual();
-        }
-        else
-        {
-            if (botaoIniciar != null) botaoIniciar.SetActive(false);
+            DataExportService.I.OnFilesSaved += (eventsPath, summaryPath) =>
+            {
+                // Exemplo simples: mensagem na UI
+                ExibirMensagemTemporaria($"Export salvo!\nEvents:\n{eventsPath}\nSummary:\n{summaryPath}", 5f);
+            };
         }
     }
 
@@ -65,12 +64,15 @@ public class TesteManager : MonoBehaviour
         textoInstrucao.gameObject.SetActive(false);
 
         TipoTarefa fase = sequenciaDeFases[indiceFaseAtual];
-        tempoFaseAtual = ObterTempoDaFase(fase); // Obter o tempo primeiro
+        tempoFaseAtual = ObterTempoDaFase(fase);
+
+        // Export: início da fase
+        DataExportService.I?.LogPhaseStart(fase.ToString());
 
         // Passa a duração da fase para o spawner preparar o plano de estímulos
         spawner.ConfigurarParaFase(fase, tempoFaseAtual);
         spawner.IniciarTeste();
-        
+
         if (fase == TipoTarefa.AtencaoAlternada && colorSpawner != null)
         {
             colorSpawner.Iniciar();
@@ -81,10 +83,16 @@ public class TesteManager : MonoBehaviour
 
     void EncerrarFaseAtual()
     {
+        if (!faseAtiva) return;
+
         faseAtiva = false;
         spawner.PararTeste();
-        
-        if (colorSpawner != null) 
+
+        // Export: fim da fase
+        var faseEncerrada = sequenciaDeFases[indiceFaseAtual];
+        DataExportService.I?.LogPhaseEnd(faseEncerrada.ToString());
+
+        if (colorSpawner != null)
         {
             colorSpawner.Parar();
         }
@@ -95,6 +103,9 @@ public class TesteManager : MonoBehaviour
             {
                 resultadoUI.MostrarResultadosNaTela();
             }
+
+            // Export: salva tudo ao final do protocolo
+            DataExportService.I?.SalvarArquivosCsv();
         }
         else
         {
