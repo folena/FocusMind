@@ -28,18 +28,37 @@ public class TesteManager : MonoBehaviour
     public TextMeshPro textoInstrucao;
     public ResultadoUIManager resultadoUI;
 
+    [Header("Heatmap")]
+    public GazeHeatmapRecorder gazeRecorder;     // arraste no Inspector
+    public bool exportarHeatmapPNG = true;       // exporta PNG por fase e geral
+    public bool exportarHeatmapCSV = true;       // exporta CSV por fase e geral
+
     private float tempoFaseAtual;
     private bool faseAtiva;
 
     void Start()
     {
+        // (opcional) tenta auto-encontrar o recorder se esquecer de arrastar
+        if (gazeRecorder == null) gazeRecorder = FindObjectOfType<GazeHeatmapRecorder>(true);
+
+        // Mensagem quando CSVs gerais (events/summary) forem salvos
         if (DataExportService.I != null)
         {
             DataExportService.I.OnFilesSaved += (eventsPath, summaryPath) =>
             {
-                // Exemplo simples: mensagem na UI
                 ExibirMensagemTemporaria($"Export salvo!\nEvents:\n{eventsPath}\nSummary:\n{summaryPath}", 5f);
             };
+        }
+
+        // Preparar primeira fase (mantém comportamento original)
+        if (sequenciaDeFases.Count > 0)
+        {
+            indiceFaseAtual = 0;
+            PrepararFaseAtual();
+        }
+        else
+        {
+            if (botaoIniciar != null) botaoIniciar.SetActive(false);
         }
     }
 
@@ -60,8 +79,8 @@ public class TesteManager : MonoBehaviour
     {
         if (indiceFaseAtual >= sequenciaDeFases.Count) return;
 
-        botaoIniciar.SetActive(false);
-        textoInstrucao.gameObject.SetActive(false);
+        if (botaoIniciar != null) botaoIniciar.SetActive(false);
+        if (textoInstrucao != null) textoInstrucao.gameObject.SetActive(false);
 
         TipoTarefa fase = sequenciaDeFases[indiceFaseAtual];
         tempoFaseAtual = ObterTempoDaFase(fase);
@@ -69,9 +88,16 @@ public class TesteManager : MonoBehaviour
         // Export: início da fase
         DataExportService.I?.LogPhaseStart(fase.ToString());
 
-        // Passa a duração da fase para o spawner preparar o plano de estímulos
+        // Spawner recebe a duração da fase e inicia
         spawner.ConfigurarParaFase(fase, tempoFaseAtual);
         spawner.IniciarTeste();
+
+        // Heatmap: começar junto com a fase
+        if (gazeRecorder != null)
+        {
+            gazeRecorder.ClearHeatmap();
+            gazeRecorder.StartRecording();
+        }
 
         if (fase == TipoTarefa.AtencaoAlternada && colorSpawner != null)
         {
@@ -86,6 +112,25 @@ public class TesteManager : MonoBehaviour
         if (!faseAtiva) return;
 
         faseAtiva = false;
+
+        // Heatmap: parar e exportar via DataExportService
+        if (gazeRecorder != null)
+        {
+            gazeRecorder.StopRecording();
+
+            if (gazeRecorder.heatmapArea != null && DataExportService.I != null)
+            {
+                string faseNome = sequenciaDeFases[indiceFaseAtual].ToString();
+                DataExportService.I.SalvarHeatmapDaFase(
+                    faseNome,
+                    gazeRecorder.heatmapArea,
+                    salvarPng: exportarHeatmapPNG,
+                    salvarCsv: exportarHeatmapCSV
+                );
+            }
+        }
+
+        // Parar spawner
         spawner.PararTeste();
 
         // Export: fim da fase
@@ -97,6 +142,7 @@ public class TesteManager : MonoBehaviour
             colorSpawner.Parar();
         }
 
+        // Se foi a última fase: mostra resultados e salva CSVs gerais + heatmap geral
         if (indiceFaseAtual >= sequenciaDeFases.Count - 1)
         {
             if (resultadoUI != null)
@@ -104,8 +150,18 @@ public class TesteManager : MonoBehaviour
                 resultadoUI.MostrarResultadosNaTela();
             }
 
-            // Export: salva tudo ao final do protocolo
+            // CSVs gerais (events/summary)
             DataExportService.I?.SalvarArquivosCsv();
+
+            // HEATMAP GERAL (soma de todas as fases)
+            if (gazeRecorder != null && gazeRecorder.heatmapArea != null)
+            {
+                DataExportService.I?.SalvarHeatmapGeral(
+                    gazeRecorder.heatmapArea,
+                    salvarPng: exportarHeatmapPNG,
+                    salvarCsv: exportarHeatmapCSV
+                );
+            }
         }
         else
         {
@@ -139,9 +195,9 @@ public class TesteManager : MonoBehaviour
         switch (fase)
         {
             case TipoTarefa.AtencaoConcentrada: return tempoConcentrada;
-            case TipoTarefa.AtencaoAlternada: return tempoAlternada;
-            case TipoTarefa.AtencaoSustentada: return tempoSustentada;
-            default: return 60f;
+            case TipoTarefa.AtencaoAlternada:   return tempoAlternada;
+            case TipoTarefa.AtencaoSustentada:  return tempoSustentada;
+            default:                            return 60f;
         }
     }
 

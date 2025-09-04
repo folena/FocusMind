@@ -1041,13 +1041,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sequenciaDeFases: 0100000002000000
   tempoConcentrada: 30
-  tempoAlternada: 120
-  tempoSustentada: 120
+  tempoAlternada: 30
+  tempoSustentada: 30
   spawner: {fileID: 309761574}
   colorSpawner: {fileID: 1925683606}
   botaoIniciar: {fileID: 245456075}
   textoInstrucao: {fileID: 845773409}
   resultadoUI: {fileID: 1327484541}
+  gazeRecorder: {fileID: 2145347958}
+  exportarHeatmapPNG: 1
+  exportarHeatmapCSV: 0
 --- !u!4 &161081175
 Transform:
   m_ObjectHideFlags: 0
@@ -2594,8 +2597,8 @@ MonoBehaviour:
   intervaloEntreEstimulos: 1.5
   delayEntreLetras: 0.5
   quantidadeAlvosConcentrada: 10
-  quantidadeAlvosSustentada: 15
-  quantidadeAlvosAlternada: 20
+  quantidadeAlvosSustentada: 5
+  quantidadeAlvosAlternada: 3
   pontoSustentada: {fileID: 1400929702}
   sustentadaTempoVisivel: 1.5
   sustentadaIntervaloOculta: {x: 5, y: 10}
@@ -2932,75 +2935,14 @@ GameObject:
   - component: {fileID: 326241015}
   - component: {fileID: 326241014}
   - component: {fileID: 326241013}
-  - component: {fileID: 326241012}
+  - component: {fileID: 326241017}
   m_Layer: 6
   m_Name: Quad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &326241012
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 326241011}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e53f185329d04084bba81ddf83451c41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cameraTransform: {fileID: 1020275610}
-  wallMask:
-    serializedVersion: 2
-    m_Bits: 64
-  wallCollider: {fileID: 326241013}
-  wallRenderer: {fileID: 326241014}
-  useProjectedUV: 0
-  projectionPlane: 0
-  sampleHz: 30
-  textureUpdateHz: 5
-  recordingOnStart: 1
-  textureWidth: 256
-  textureHeight: 256
-  brushRadiusPixels: 6
-  brushStrength: 1
-  brushFeather: 0.7
-  decayEnabled: 0
-  decayPerSecond: 0.1
-  colorGradient:
-    serializedVersion: 2
-    key0: {r: 0, g: 0, b: 0.3, a: 0}
-    key1: {r: 0, g: 0.7, b: 1, a: 1}
-    key2: {r: 1, g: 1, b: 0, a: 1}
-    key3: {r: 1, g: 0.27, b: 0, a: 0}
-    key4: {r: 1, g: 1, b: 1, a: 0}
-    key5: {r: 0, g: 0, b: 0, a: 0}
-    key6: {r: 0, g: 0, b: 0, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 0
-    ctime1: 22937
-    ctime2: 42598
-    ctime3: 55705
-    ctime4: 65535
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
-    atime0: 0
-    atime1: 22937
-    atime2: 65535
-    atime3: 0
-    atime4: 0
-    atime5: 0
-    atime6: 0
-    atime7: 0
-    m_Mode: 0
-    m_NumColorKeys: 5
-    m_NumAlphaKeys: 3
-  materialTextureProperty: _MainTex
-  blendOriginal: 0
+  m_IsActive: 1
 --- !u!64 &326241013
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3022,7 +2964,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 326241011}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -3073,13 +3015,67 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 326241011}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6532, y: 2.8134, z: 4.954}
+  m_LocalPosition: {x: 0.6532, y: 2.8134, z: 4.81}
   m_LocalScale: {x: 14.107178, y: 4.8628, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &326241017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 326241011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e53f185329d04084bba81ddf83451c41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wallRenderer: {fileID: 326241014}
+  wallCollider: {fileID: 326241013}
+  textureWidth: 256
+  textureHeight: 256
+  materialTextureProperty: _BaseMap
+  filterMode: 1
+  wrapMode: 1
+  brushRadiusPixels: 8
+  brushStrength: 1
+  brushFeather: 0.7
+  colorGradient:
+    serializedVersion: 2
+    key0: {r: 0, g: 0, b: 0.3, a: 0}
+    key1: {r: 0, g: 0.7, b: 1, a: 1}
+    key2: {r: 1, g: 1, b: 0, a: 1}
+    key3: {r: 1, g: 0.27, b: 0, a: 0}
+    key4: {r: 1, g: 1, b: 1, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 22937
+    ctime2: 42598
+    ctime3: 55705
+    ctime4: 65535
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 22937
+    atime2: 65535
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 5
+    m_NumAlphaKeys: 3
+  textureUpdateHz: 5
+  selfTestOnStart: 0
+  logChosenProperty: 1
 --- !u!1001 &342660507
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20535,3 +20531,56 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2114631159}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2145347957
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2145347959}
+  - component: {fileID: 2145347958}
+  m_Layer: 0
+  m_Name: GazeRecorder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2145347958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145347957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4296f0c9ca74fcc9a01d3d6ebb422c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraTransform: {fileID: 990855036}
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 64
+  heatmapArea: {fileID: 326241017}
+  sampleHz: 30
+  maxDistance: 1000
+  recordingOnStart: 0
+  totalSamples: 0
+--- !u!4 &2145347959
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145347957}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.631092, y: 3.6674297, z: 0.1947543}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 20
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
