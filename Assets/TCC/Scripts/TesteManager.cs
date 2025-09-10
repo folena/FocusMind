@@ -33,15 +33,17 @@ public class TesteManager : MonoBehaviour
     public bool exportarHeatmapPNG = true;       // exporta PNG por fase e geral
     public bool exportarHeatmapCSV = true;       // exporta CSV por fase e geral
 
+    [Header("Fluxo final")]
+    public GameObject botaoFinalTrocarCena;      // <-- arraste seu botão aqui
+    public string cenaDestinoAoFinal = "";       // opcional: define a cena aqui
+
     private float tempoFaseAtual;
     private bool faseAtiva;
 
     void Start()
     {
-        // (opcional) tenta auto-encontrar o recorder se esquecer de arrastar
         if (gazeRecorder == null) gazeRecorder = FindObjectOfType<GazeHeatmapRecorder>(true);
 
-        // Mensagem quando CSVs gerais (events/summary) forem salvos
         if (DataExportService.I != null)
         {
             DataExportService.I.OnFilesSaved += (eventsPath, summaryPath) =>
@@ -50,7 +52,19 @@ public class TesteManager : MonoBehaviour
             };
         }
 
-        // Preparar primeira fase (mantém comportamento original)
+        // Garantir que o botão final comece invisível
+        if (botaoFinalTrocarCena != null)
+        {
+            botaoFinalTrocarCena.SetActive(false);
+
+            // se quiser já configurar a cena destino no componente do botão
+            if (!string.IsNullOrEmpty(cenaDestinoAoFinal))
+            {
+                var trocar = botaoFinalTrocarCena.GetComponent<BotaoMudarCena>();
+                if (trocar != null) trocar.nomeCenaDestino = cenaDestinoAoFinal;
+            }
+        }
+
         if (sequenciaDeFases.Count > 0)
         {
             indiceFaseAtual = 0;
@@ -67,7 +81,6 @@ public class TesteManager : MonoBehaviour
         if (faseAtiva)
         {
             tempoFaseAtual -= Time.deltaTime;
-
             if (tempoFaseAtual <= 0f)
             {
                 EncerrarFaseAtual();
@@ -85,14 +98,16 @@ public class TesteManager : MonoBehaviour
         TipoTarefa fase = sequenciaDeFases[indiceFaseAtual];
         tempoFaseAtual = ObterTempoDaFase(fase);
 
-        // Export: início da fase
         DataExportService.I?.LogPhaseStart(fase.ToString());
 
-        // Spawner recebe a duração da fase e inicia
+        if (fase == TesteManager.TipoTarefa.AtencaoAlternada && colorSpawner != null)
+        {
+            colorSpawner.Iniciar();          // (no seu ColorSpawner, isso faz um Parar/Limpar)
+        }
+        
         spawner.ConfigurarParaFase(fase, tempoFaseAtual);
         spawner.IniciarTeste();
 
-        // Heatmap: começar junto com a fase
         if (gazeRecorder != null)
         {
             gazeRecorder.ClearHeatmap();
@@ -110,10 +125,8 @@ public class TesteManager : MonoBehaviour
     void EncerrarFaseAtual()
     {
         if (!faseAtiva) return;
-
         faseAtiva = false;
 
-        // Heatmap: parar e exportar via DataExportService
         if (gazeRecorder != null)
         {
             gazeRecorder.StopRecording();
@@ -130,25 +143,16 @@ public class TesteManager : MonoBehaviour
             }
         }
 
-        // Parar spawner
         spawner.PararTeste();
 
-        // Export: fim da fase
         var faseEncerrada = sequenciaDeFases[indiceFaseAtual];
         DataExportService.I?.LogPhaseEnd(faseEncerrada.ToString());
 
-        if (colorSpawner != null)
-        {
-            colorSpawner.Parar();
-        }
+        if (colorSpawner != null) colorSpawner.Parar();
 
-        // Se foi a última fase: mostra resultados e salva CSVs gerais + heatmap geral
         if (indiceFaseAtual >= sequenciaDeFases.Count - 1)
         {
-            if (resultadoUI != null)
-            {
-                resultadoUI.MostrarResultadosNaTela();
-            }
+            if (resultadoUI != null) resultadoUI.MostrarResultadosNaTela();
 
             // CSVs gerais (events/summary)
             DataExportService.I?.SalvarArquivosCsv();
@@ -161,6 +165,20 @@ public class TesteManager : MonoBehaviour
                     salvarPng: exportarHeatmapPNG,
                     salvarCsv: exportarHeatmapCSV
                 );
+            }
+
+            // ATIVAR BOTÃO FINAL APÓS TUDO CONCLUÍDO
+            if (botaoFinalTrocarCena != null)
+            {
+                // garante que o componente tem a cena correta, se você definiu aqui
+                if (!string.IsNullOrEmpty(cenaDestinoAoFinal))
+                {
+                    var trocar = botaoFinalTrocarCena.GetComponent<BotaoMudarCena>();
+                    if (trocar != null) trocar.nomeCenaDestino = cenaDestinoAoFinal;
+                }
+
+                botaoFinalTrocarCena.SetActive(true);
+                ExibirMensagemTemporaria("Teste concluído! Toque no botão para continuar.", 4f);
             }
         }
         else

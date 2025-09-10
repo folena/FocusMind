@@ -146,9 +146,7 @@ public class DataExportService : MonoBehaviour
         LastExportFolder = root;
         LastExportEventsPath = eventosPath;
         LastExportSummaryPath = resumoPath;
-
-        Debug.Log($"[DataExport] Arquivos salvos:\n- Events : {eventosPath}\n- Summary: {resumoPath}\n- Marker : {Path.Combine(root, "last_export.txt")}");
-
+        
         OnFilesSaved?.Invoke(eventosPath, resumoPath);
     }
 
@@ -167,7 +165,6 @@ public class DataExportService : MonoBehaviour
             // se tamanhos diferentes, faz um aviso e ignora (ou poderia reamostrar)
             if (w != _hmW || h != _hmH)
             {
-                Debug.LogWarning($"[DataExport] Tamanho do heatmap da fase ({w}x{h}) difere do acumulador ({_hmW}x{_hmH}). Acúmulo ignorado para esta fase.");
                 return;
             }
         }
@@ -188,7 +185,6 @@ public class DataExportService : MonoBehaviour
     {
         if (area == null)
         {
-            Debug.LogWarning("[DataExport] SalvarHeatmapDaFase chamado com HeatmapArea nulo.");
             return (null, null);
         }
 
@@ -208,14 +204,12 @@ public class DataExportService : MonoBehaviour
                 pngPath = Path.Combine(root, baseName + "_heatmap.png");
                 var bytes = area.EncodeToPNG();
                 File.WriteAllBytes(pngPath, bytes);
-                Debug.Log("[DataExport] Heatmap PNG salvo em: " + pngPath);
             }
 
             if (salvarCsv)
             {
                 csvPath = Path.Combine(root, baseName + "_heatmap_bins.csv");
                 area.ExportDensityCsv(csvPath);
-                Debug.Log("[DataExport] Heatmap CSV salvo em: " + csvPath);
             }
 
             AtualizarMarker(root, LastExportEventsPath, LastExportSummaryPath, (pngPath, csvPath));
@@ -233,7 +227,6 @@ public class DataExportService : MonoBehaviour
     {
         if (_heatmapGeral == null)
         {
-            Debug.LogWarning("[DataExport] HeatmapGeral vazio. Nada para salvar.");
             return (null, null);
         }
 
@@ -252,14 +245,12 @@ public class DataExportService : MonoBehaviour
                 pngPath = Path.Combine(root, baseName + "_heatmap.png");
                 File.WriteAllBytes(pngPath, tex.EncodeToPNG());
                 UnityEngine.Object.Destroy(tex);
-                Debug.Log("[DataExport] Heatmap GERAL PNG salvo em: " + pngPath);
             }
 
             if (salvarCsv)
             {
                 csvPath = Path.Combine(root, baseName + "_heatmap_bins.csv");
                 ExportDensityCsv(_heatmapGeral, _hmW, _hmH, csvPath);
-                Debug.Log("[DataExport] Heatmap GERAL CSV salvo em: " + csvPath);
             }
 
             AtualizarMarker(root, LastExportEventsPath, LastExportSummaryPath, (pngPath, csvPath));
@@ -288,22 +279,32 @@ public class DataExportService : MonoBehaviour
         foreach (var e in _eventos)
         {
             sb.Append(e.utc.ToString("o")).Append(',')
-              .Append(Escape(e.fase)).Append(',')
-              .Append(e.tipo).Append(',')
-              .Append(e.alvoIndex).Append(',')
-              .Append(e.reactionTime.ToString("G9", CultureInfo.InvariantCulture)).Append(',')
-              .Append(Escape(e.letra)).Append(',')
-              .Append(Escape(e.cor)).Append(',')
-              .Append(e.isTarget ? "1" : "0").Append('\n');
+            .Append(LabelFaseCSV(e.fase)).Append(',')
+            .Append(e.tipo).Append(',')
+            .Append(e.alvoIndex).Append(',')
+            .Append(e.reactionTime.ToString("G9", CultureInfo.InvariantCulture)).Append(',')
+            .Append(Escape(e.letra)).Append(',')
+            .Append(Escape(e.cor)).Append(',')
+            .Append(e.isTarget ? "1" : "0").Append('\n');
         }
         File.WriteAllText(path, sb.ToString(), Encoding.UTF8);
     }
 
+    private static string LabelFaseCSV(string faseRaw)
+    {
+        if (string.IsNullOrEmpty(faseRaw)) return "";
+        var f = faseRaw.ToLowerInvariant();
+        if (f.Contains("altern"))   return "alternada";
+        if (f.Contains("susten"))   return "sustentada";
+        if (f.Contains("concen"))   return "concentrada";
+        return faseRaw; // fallback
+    }
+    
     private void SalvarResumoCsv(string path)
     {
         var fases = _contadores.Keys.OrderBy(k => k).ToList();
         var sb = new StringBuilder();
-        sb.AppendLine("fase,alvos,acertos,erros,omissoes,distratores,media_rt_s,desvio_padrao_rt_s");
+        sb.AppendLine("attentionType,targetLetters,hits,errors,omissions,distractorsActivated,avgReactionTime");
 
         foreach (var f in fases)
         {
@@ -317,7 +318,7 @@ public class DataExportService : MonoBehaviour
             }
 
             var c = _contadores[f];
-            sb.Append(Escape(f)).Append(',')
+            sb.Append(LabelFaseCSV(f)).Append(',')
               .Append(c.alvos).Append(',')
               .Append(c.acertos).Append(',')
               .Append(c.erros).Append(',')

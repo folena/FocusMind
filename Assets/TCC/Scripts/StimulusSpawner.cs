@@ -78,7 +78,8 @@ public class StimulusSpawner : MonoBehaviour
         }
         else
         {
-            StartCoroutine(ControlarEstimulos());
+            // ✅ espera 1 frame antes do primeiro Spawn para garantir que o ColorSpawner já iniciou
+            StartCoroutine(ControlarEstimulos(delayPrimeiroFrame: true));
         }
 
         if (distratorController != null)
@@ -111,8 +112,14 @@ public class StimulusSpawner : MonoBehaviour
         }
     }
 
-    IEnumerator ControlarEstimulos()
+    IEnumerator ControlarEstimulos(bool delayPrimeiroFrame = false)
     {
+        if (delayPrimeiroFrame) yield return null; // ✅ dá tempo para ColorSpawner/refs inicializarem
+
+        // antes do primeiro spawn na Alternada, garanta estado limpo de cor
+        if (faseAtual == TesteManager.TipoTarefa.AtencaoAlternada && colorSpawner != null)
+            colorSpawner.LimparCor();
+
         while (testeAtivo)
         {
             SpawnLetra();
@@ -125,8 +132,10 @@ public class StimulusSpawner : MonoBehaviour
                 Destroy(letraAtual);
                 letraAtual = null;
             }
+
             if (faseAtual == TesteManager.TipoTarefa.AtencaoAlternada && colorSpawner != null)
             {
+                // limpa a cor entre uma letra e outra
                 colorSpawner.LimparCor();
             }
 
@@ -251,7 +260,6 @@ public class StimulusSpawner : MonoBehaviour
 
         if (quantidadeDistratores < 0)
         {
-            Debug.LogWarning("Alvos configurados > total de estímulos possíveis. Todos serão alvos.");
             quantidadeAlvos = totalEstimulos;
             quantidadeDistratores = 0;
         }
@@ -288,6 +296,7 @@ public class StimulusSpawner : MonoBehaviour
                 case TesteManager.TipoTarefa.AtencaoSustentada:
                     prefabLetra = letrasAlvo.FirstOrDefault(l => l.name.Trim().ToUpper().Contains(letraAlvoAtual.ToUpper()));
                     break;
+
                 case TesteManager.TipoTarefa.AtencaoAlternada:
                     if (alvosDaFaseAlternada.Length > 0)
                     {
@@ -296,6 +305,7 @@ public class StimulusSpawner : MonoBehaviour
 
                         if (colorSpawner != null)
                         {
+                            // ✅ garante que a cor do par alvo já esteja na cena antes da letra
                             colorSpawner.SpawnCorEspecifica(alvoEscolhido.corPrefab);
                         }
                     }
@@ -323,7 +333,6 @@ public class StimulusSpawner : MonoBehaviour
 
         if (prefabLetra == null)
         {
-            Debug.LogError("Nenhum prefab de letra pôde ser selecionado. Verifique as configurações.");
             return;
         }
 
