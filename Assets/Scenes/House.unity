@@ -1906,7 +1906,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sequenciaDeFases: 00000000
-  tempoConcentrada: 150
+  tempoConcentrada: 30
   tempoAlternada: 30
   tempoSustentada: 5
   spawner: {fileID: 555403711}
@@ -3154,7 +3154,7 @@ MonoBehaviour:
   colorSpawner: {fileID: 0}
   intervaloEntreEstimulos: 1.5
   delayEntreLetras: 0.5
-  quantidadeAlvosConcentrada: 30
+  quantidadeAlvosConcentrada: 10
   quantidadeAlvosSustentada: 15
   quantidadeAlvosAlternada: 25
   pontoSustentada: {fileID: 566594369}
@@ -5448,7 +5448,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1106516662}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -9573,7 +9573,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1761808659
 Transform:
   m_ObjectHideFlags: 0
@@ -9985,7 +9985,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1761808658}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: caff514de9b15ad48ab85dcff5508221, type: 3}
   m_Name: 

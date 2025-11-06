@@ -1040,9 +1040,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sequenciaDeFases: 0100000002000000
-  tempoConcentrada: 150
-  tempoAlternada: 150
-  tempoSustentada: 150
+  tempoConcentrada: 30
+  tempoAlternada: 30
+  tempoSustentada: 30
   spawner: {fileID: 309761574}
   colorSpawner: {fileID: 1925683606}
   botaoIniciar: {fileID: 245456075}
@@ -2895,8 +2895,8 @@ MonoBehaviour:
   intervaloEntreEstimulos: 1.5
   delayEntreLetras: 0.5
   quantidadeAlvosConcentrada: 30
-  quantidadeAlvosSustentada: 20
-  quantidadeAlvosAlternada: 35
+  quantidadeAlvosSustentada: 5
+  quantidadeAlvosAlternada: 10
   pontoSustentada: {fileID: 1400929702}
   sustentadaTempoVisivel: 1.5
   sustentadaIntervaloOculta: {x: 5, y: 10}
@@ -3313,8 +3313,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 326241011}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.1428, y: 2.8339, z: 4.81}
-  m_LocalScale: {x: 13.749712, y: 4.785701, z: 1}
+  m_LocalPosition: {x: -0.248, y: 2.3969, z: 4.81}
+  m_LocalScale: {x: 9.762532, y: 3.9118316, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -3334,8 +3334,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallRenderer: {fileID: 326241014}
   wallCollider: {fileID: 326241013}
-  textureWidth: 256
-  textureHeight: 256
+  textureWidth: 1280
+  textureHeight: 475
   materialTextureProperty: _BaseMap
   filterMode: 1
   wrapMode: 1
@@ -4625,7 +4625,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &514877033
 Transform:
   m_ObjectHideFlags: 0
@@ -5037,7 +5037,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 514877032}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: caff514de9b15ad48ab85dcff5508221, type: 3}
   m_Name: 
@@ -7646,7 +7646,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 779020085}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -8474,7 +8474,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &845773409
 MonoBehaviour:
   m_ObjectHideFlags: 0

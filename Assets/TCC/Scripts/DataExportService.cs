@@ -309,23 +309,20 @@ public class DataExportService : MonoBehaviour
         foreach (var f in fases)
         {
             _reactionsPorFase.TryGetValue(f, out var rts);
-            float media = 0f, dp = 0f;
+            float media = 0f;
             if (rts != null && rts.Count > 0)
             {
                 media = rts.Average();
-                float var = rts.Select(x => (x - media) * (x - media)).Sum() / rts.Count;
-                dp = Mathf.Sqrt(var);
             }
 
             var c = _contadores[f];
             sb.Append(LabelFaseCSV(f)).Append(',')
-              .Append(c.alvos).Append(',')
-              .Append(c.acertos).Append(',')
-              .Append(c.erros).Append(',')
-              .Append(c.omissoes).Append(',')
-              .Append(c.distratores).Append(',')
-              .Append(media.ToString("G9", CultureInfo.InvariantCulture)).Append(',')
-              .Append(dp.ToString("G9", CultureInfo.InvariantCulture)).Append('\n');
+                .Append(c.alvos).Append(',')
+                .Append(c.acertos).Append(',')
+                .Append(c.erros).Append(',')
+                .Append(c.omissoes).Append(',')
+                .Append(c.distratores).Append(',')
+                .Append(media.ToString("G9", CultureInfo.InvariantCulture));
         }
         File.WriteAllText(path, sb.ToString(), Encoding.UTF8);
     }
