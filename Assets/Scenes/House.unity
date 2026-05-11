@@ -1906,7 +1906,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sequenciaDeFases: 00000000
-  tempoConcentrada: 30
+  tempoConcentrada: 60
   tempoAlternada: 30
   tempoSustentada: 5
   spawner: {fileID: 555403711}
@@ -3154,7 +3154,7 @@ MonoBehaviour:
   colorSpawner: {fileID: 0}
   intervaloEntreEstimulos: 1.5
   delayEntreLetras: 0.5
-  quantidadeAlvosConcentrada: 10
+  quantidadeAlvosConcentrada: 15
   quantidadeAlvosSustentada: 15
   quantidadeAlvosAlternada: 25
   pontoSustentada: {fileID: 566594369}

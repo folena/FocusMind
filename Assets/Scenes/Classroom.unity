@@ -1040,9 +1040,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sequenciaDeFases: 0100000002000000
-  tempoConcentrada: 30
-  tempoAlternada: 30
-  tempoSustentada: 30
+  tempoConcentrada: 60
+  tempoAlternada: 60
+  tempoSustentada: 60
   spawner: {fileID: 309761574}
   colorSpawner: {fileID: 1925683606}
   botaoIniciar: {fileID: 245456075}
@@ -2894,9 +2894,9 @@ MonoBehaviour:
   colorSpawner: {fileID: 1925683606}
   intervaloEntreEstimulos: 1.5
   delayEntreLetras: 0.5
-  quantidadeAlvosConcentrada: 30
-  quantidadeAlvosSustentada: 5
-  quantidadeAlvosAlternada: 10
+  quantidadeAlvosConcentrada: 15
+  quantidadeAlvosSustentada: 15
+  quantidadeAlvosAlternada: 20
   pontoSustentada: {fileID: 1400929702}
   sustentadaTempoVisivel: 1.5
   sustentadaIntervaloOculta: {x: 5, y: 10}
@@ -11992,7 +11992,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   somAmbiente: {fileID: 0}
   clipAmbiente: {fileID: 0}
-  distratoresConcentrada: []
+  distratoresConcentrada:
+  - audioSource: {fileID: 0}
+    somAlarme: {fileID: 0}
+    hitboxDistrator: {fileID: 0}
+    tempoInicial: 0
+  - audioSource: {fileID: 0}
+    somAlarme: {fileID: 0}
+    hitboxDistrator: {fileID: 0}
+    tempoInicial: 0
+  - audioSource: {fileID: 0}
+    somAlarme: {fileID: 0}
+    hitboxDistrator: {fileID: 0}
+    tempoInicial: 0
+  - audioSource: {fileID: 0}
+    somAlarme: {fileID: 0}
+    hitboxDistrator: {fileID: 0}
+    tempoInicial: 0
+  - audioSource: {fileID: 0}
+    somAlarme: {fileID: 0}
+    hitboxDistrator: {fileID: 0}
+    tempoInicial: 0
   distratoresAlternada:
   - audioSource: {fileID: 1169687989}
     somAlarme: {fileID: 8300000, guid: e427b424b3e8cdb4db4acf01effb8390, type: 3}
@@ -12009,23 +12029,7 @@ MonoBehaviour:
   - audioSource: {fileID: 2068475212}
     somAlarme: {fileID: 8300000, guid: 963a3b1e24b9aef469b0d7d1be8714f5, type: 3}
     hitboxDistrator: {fileID: 111907544}
-    tempoInicial: 70
-  - audioSource: {fileID: 1169687989}
-    somAlarme: {fileID: 8300000, guid: e427b424b3e8cdb4db4acf01effb8390, type: 3}
-    hitboxDistrator: {fileID: 1525269544}
-    tempoInicial: 90
-  - audioSource: {fileID: 1279392259}
-    somAlarme: {fileID: 8300000, guid: b21fe93fe7ee672438123daba4dcc0a4, type: 3}
-    hitboxDistrator: {fileID: 260348712}
-    tempoInicial: 100
-  - audioSource: {fileID: 2049979695}
-    somAlarme: {fileID: 8300000, guid: 0113137d28a071f449592ebc3b365d35, type: 3}
-    hitboxDistrator: {fileID: 2082240374}
-    tempoInicial: 120
-  - audioSource: {fileID: 1279392259}
-    somAlarme: {fileID: 8300000, guid: b21fe93fe7ee672438123daba4dcc0a4, type: 3}
-    hitboxDistrator: {fileID: 260348712}
-    tempoInicial: 140
+    tempoInicial: 50
   distratoresSustentada:
   - audioSource: {fileID: 1940935436}
     somAlarme: {fileID: 0}
@@ -12038,27 +12042,11 @@ MonoBehaviour:
   - audioSource: {fileID: 1279392259}
     somAlarme: {fileID: 8300000, guid: b21fe93fe7ee672438123daba4dcc0a4, type: 3}
     hitboxDistrator: {fileID: 260348712}
-    tempoInicial: 45
+    tempoInicial: 35
   - audioSource: {fileID: 1607778784}
     somAlarme: {fileID: 8300000, guid: 78978b0848a7c9f4884b2969da5f3f99, type: 3}
     hitboxDistrator: {fileID: 1483593167}
-    tempoInicial: 60
-  - audioSource: {fileID: 425110375}
-    somAlarme: {fileID: 8300000, guid: 557c6ca0db6307945b38ce70cc84f781, type: 3}
-    hitboxDistrator: {fileID: 1751189351}
-    tempoInicial: 75
-  - audioSource: {fileID: 779020091}
-    somAlarme: {fileID: 8300000, guid: b20c39bb089088b41864ba6d9a026c44, type: 3}
-    hitboxDistrator: {fileID: 779020085}
-    tempoInicial: 100
-  - audioSource: {fileID: 1169687989}
-    somAlarme: {fileID: 8300000, guid: e427b424b3e8cdb4db4acf01effb8390, type: 3}
-    hitboxDistrator: {fileID: 1525269544}
-    tempoInicial: 120
-  - audioSource: {fileID: 1144729536}
-    somAlarme: {fileID: 8300000, guid: 1449e33cae5233f4c993b18306c5e4cc, type: 3}
-    hitboxDistrator: {fileID: 1712454466}
-    tempoInicial: 140
+    tempoInicial: 45
 --- !u!4 &1188643045
 Transform:
   m_ObjectHideFlags: 0
@@ -13340,7 +13328,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1327484541
 MonoBehaviour:
   m_ObjectHideFlags: 0
